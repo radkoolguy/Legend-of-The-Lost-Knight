@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.idle_cycle = [pygame.image.load(f"idle/idleanim{i:0>2}.png") for i in range(1,15)]
         self.walk_cycle = [pygame.image.load(f"walk/walkanim{i:0>2}.png") for i in range(1,9)]
         self.run_cycle = [pygame.image.load(f"run/runanim{i:0>2}.png") for i in range(3,28)]
-        self.punch_cycle = [pygame.image.load(f"punch/punchanim{i:0>2}.png") for i in range(1,11)]
+        self.punch_cycle = [pygame.image.load(f"punch/punchanim{i:0>2}.png") for i in range(1,13)]
         self.idle_animation_index = 0
         self.walk_animation_index = 0
         self.run_animation_index = 0
