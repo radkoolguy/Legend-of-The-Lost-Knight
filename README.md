@@ -1,2 +1,2 @@
 # Legend-of-The-Lost-Knight
-ya mum yea
+how many hits can you get before your health reaches 0!
