@@ -5,8 +5,7 @@ Variables
 '''
 title = pygame.display.set_caption("Legend of The Lost Knight")
 width,height = 1000, 450
-blue = (0,0,255)
-red = (255,0,0)
+white = (255,255,255)
 gravity = 1
 jump_height = 20
 y_velocity = jump_height
@@ -24,13 +23,15 @@ class Player(pygame.sprite.Sprite):
         self.idle_cycle = [pygame.image.load(f"idle/idleanim{i:0>2}.png") for i in range(1,15)]
         self.walk_cycle = [pygame.image.load(f"walk/walkanim{i:0>2}.png") for i in range(1,9)]
         self.run_cycle = [pygame.image.load(f"run/runanim{i:0>2}.png") for i in range(3,28)]
-        self.punch_cycle = [pygame.image.load(f"punch/punchanim{i:0>2}.png") for i in range(1,13)]
+        self.punch_cycle = [pygame.image.load(f"punch/punchanim{i:0>2}.png") for i in range(7,16)]
         self.idle_animation_index = 0
         self.walk_animation_index = 0
         self.run_animation_index = 0
         self.punch_anim_index = 0
         self.rect = self.image.get_rect()
+        self.rect.center = (0,40)
         self.facing_left = False
+        self.health = 100
 #Move Function
     def move(self, x, y):
         self.rect.move_ip([x,y])
@@ -86,7 +87,9 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("enemy/enemy.png")
-        self.rect = self.image.get_rect()   
+        self.rect = self.image.get_rect()  
+        self.hitcount = 0 
+        self.rect.center = (800,40)
 '''
 Setup
 '''
@@ -101,16 +104,19 @@ player = Player()
 enemy = Enemy()
 player.rect.x = 0
 player.rect.y = 40
-enemy.rect.x = 300
+enemy.rect.x = 800
 enemy.rect.y = 40
 player_list = pygame.sprite.Group()
 player_list.add(player)
-player_list.add(enemy)
+enemy_list = pygame.sprite.Group()
+enemy_list.add(enemy)
+
 '''
 Main Loop
 '''
 #While Loop
 while run:
+    pygame.event.pump()
     enemy.rect.x -= 5
     if enemy.rect.x < 0:
         enemy.rect.x = 300
@@ -174,10 +180,28 @@ while run:
         player.redrawWindowLeft()
     else:
         screen.blit(bg,(0,0))
+    collision = pygame.sprite.groupcollide(player_list, enemy_list, False, False)
+    if collision:
+        player.health -= 1/4
+    if player.health == 0:
+        player.kill()
+    if collision and key[pygame.K_e]:
+        enemy.hitcount += 1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
             pygame.quit()
             sys.exit()
+    font = pygame.font.Font("foul-fiend/Foul Fiend.ttf", 16)
+    text = font.render("Health:"+str(player.health), True, white)
+    textrect = text.get_rect()
+    textrect.center = (100,100)
+    hitfont = pygame.font.Font("foul-fiend/Foul Fiend.ttf", 16)
+    hittext = font.render("Hits:"+str(enemy.hitcount), True, white)
+    hitrect = hittext.get_rect()
+    hitrect.center = (300,100)
+    screen.blit(text, textrect)
+    screen.blit(hittext, hitrect)
     player_list.draw(screen)
+    enemy_list.draw(screen)
     pygame.display.update()
